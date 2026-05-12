@@ -1,6 +1,8 @@
 #include <iostream>
+#include "funcoes.cpp"
 
 int main() {
-    std::cout << "Este é o arquivo principal do projeto!" << std::endl;
+    int x = 5;
+    std::cout << x << " ao quadrado é " << quadrado(x) << std::endl;
     return 0;
 }
