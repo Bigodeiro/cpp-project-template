@@ -1,50 +1,33 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -Iinclude
+CXXFLAGS = -Wall -Iinclude
 
-APP_NAME = app
-TEST_NAME = test
+SRC = $(wildcard src/*.cpp)
+OBJ = $(patsubst src/%.cpp, bin/%.o, $(SRC))
 
-SRC_DIR = src
-TEST_DIR = test
-INCLUDE_DIR = include
-BUILD_DIR = build
+TARGET = bin/exe
 
-APP_SOURCES = $(SRC_DIR)/main.cpp $(SRC_DIR)/funcoes.cpp
-TEST_SOURCES = $(TEST_DIR)/main.cpp $(SRC_DIR)/funcoes.cpp
+TEST_SRC = test/mainTest.cpp src/container.cpp
+TEST_OBJ = $(patsubst %.cpp, bin/%.o, $(TEST_SRC))
 
-APP_OBJECTS = $(BUILD_DIR)/main.o $(BUILD_DIR)/funcoes.o
-TEST_OBJECTS = $(BUILD_DIR)/test_main.o $(BUILD_DIR)/funcoes_test.o
+TEST_TARGET = bin/test
 
-all: $(APP_NAME)
+all: $(TARGET)
 
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+$(TARGET): $(OBJ)
+	$(CXX) $(OBJ) -o $(TARGET)
 
-$(BUILD_DIR)/main.o: $(SRC_DIR)/main.cpp $(INCLUDE_DIR)/funcoes.hpp | $(BUILD_DIR)
+bin/%.o: src/%.cpp
+	@mkdir -p bin
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/funcoes.o: $(SRC_DIR)/funcoes.cpp $(INCLUDE_DIR)/funcoes.hpp | $(BUILD_DIR)
+bin/%.o: test/%.cpp
+	@mkdir -p bin
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(APP_NAME): $(APP_OBJECTS)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+test: $(TEST_TARGET)
 
-$(BUILD_DIR)/test_main.o: $(TEST_DIR)/main.cpp $(INCLUDE_DIR)/funcoes.hpp | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/funcoes_test.o: $(SRC_DIR)/funcoes.cpp $(INCLUDE_DIR)/funcoes.hpp | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(TEST_NAME): $(BUILD_DIR)/test_main.o $(BUILD_DIR)/funcoes_test.o
-	$(CXX) $(CXXFLAGS) $^ -o $@
-
-run: $(APP_NAME)
-	./$(APP_NAME)
-
-test: $(TEST_NAME)
-	./$(TEST_NAME)
+$(TEST_TARGET): $(TEST_OBJ)
+	$(CXX) $(TEST_OBJ) -o $(TEST_TARGET)
 
 clean:
-	rm -rf $(BUILD_DIR) $(APP_NAME) $(TEST_NAME)
-
-.PHONY: all run test clean
+	rm -rf bin/*
