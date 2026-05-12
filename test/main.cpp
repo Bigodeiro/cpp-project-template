@@ -1,6 +1,14 @@
 #include <iostream>
+#include <assert.h>
+#include "../include/funcoes.hpp"
 
-int main() {
-    std::cout << "Este é o arquivo que sera feito os testes unitários!" << std::endl;
+
+using namespace std;
+
+int main(int argc, char* argv[]) {
+
+    assert(quadrado(2) == 4);
+    assert(quadrado(3) == 9);
+
     return 0;
 }
